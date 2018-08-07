@@ -8,6 +8,8 @@ INSTRUCTIONS:
 User will receive a command prompt for what they will like to search for. After entering desired search criteria, output will appear as links from the first page of results. 
 
 EXAMPLE:
-	[INPUT] <website>	
-	[OUTPUT] "/url?q=<website>"
+	[INPUT PROMPT] Please enter what you wish to find: <Insert Here>	
+	      [OUTPUT] <website>
+		       <website>
+		       <website>
 

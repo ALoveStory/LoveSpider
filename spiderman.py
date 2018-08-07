@@ -8,7 +8,8 @@ from bs4 import BeautifulSoup
 # function to print links
 def printLinks(self):
 	for link in self.find_all(href=re.compile("/url")):
-		print(link.get("href"))
+		url = (link.get("href"))
+		print url.strip("/url?q=")
 
 # function to create a list of links
 def createLinkList(self):

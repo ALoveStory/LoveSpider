@@ -2,12 +2,13 @@
 # Webcrawler for search engine
 
 import requests
+import re
 from bs4 import BeautifulSoup
 
 # function to print links
 def printLinks(self):
-	for link in self.find_all('a'):
-		print(link.get('href')
+	for link in self.find_all(href=re.compile("/url")):
+		print(link.get("href"))
 
 # function to create a list of links
 def createLinkList(self):
@@ -15,13 +16,13 @@ def createLinkList(self):
 	printLinks(extractLinks)
 
 # function which forwards user input into the google search engine
-def searchGoogle(self):
+def searchGoogle(userInput):
 	searchsite = requests.get(
-	"https://www.google.com/search",
-	params = dict(
-		query=self
+		"https://www.google.com/search",
+		params = dict(
+			query=userInput
 	)) 
-	
+	# call to function to create a list of links
 	createLinkList(searchsite)
 
 # main

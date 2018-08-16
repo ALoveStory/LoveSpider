@@ -13,4 +13,4 @@ Enter your search query on the command line following "python spiderman.py". Pro
 Example: python spiderman.py [Enter inquiry]
 If I wanted to search for "who is Peter Parker", I would enter:
 - "python spiderman.py who is Peter Parker" 
-The inquiry would be "who is Peter Parker"
+The inquiry would be "who is Peter Parker".

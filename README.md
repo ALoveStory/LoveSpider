@@ -1,8 +1,16 @@
 # Author: Antwan Love
 # Project: LoveSpider
 
+REQUIREMENTS:
+Python 2.7.15 or later
+
 DESCRIPTION:
 A webcrawler for google search engine. Using python to capture and return first page of google results for any search input and output results through the command line.
 
 INSTRUCTIONS:
-User will receive a command prompt for what they will like to search for. After entering desired search criteria, output will appear as links from the first page of results. 
+Enter your search query on the command line following "python spiderman.py". Program will return links relative to your inquiry.
+
+Example: python spiderman.py [Enter inquiry]
+If I wanted to search for "who is Peter Parker", I would enter:
+- "python spiderman.py who is Peter Parker" 
+The inquiry would be "who is Peter Parker"

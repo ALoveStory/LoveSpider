@@ -1,15 +1,18 @@
 # Author: Antwan Love
 # Webcrawler for search engine
 
-import requests
 import re
+import requests
+import sys
 from bs4 import BeautifulSoup
 
 # function to print links
 def printLinks(self):
+	i = 1	
 	for link in self.find_all(href=re.compile("/url")):
 		url = (link.get("href"))
-		print url.strip("/url?q=")
+		print "(", i,")", url.strip("/url?q=")
+		i+= 1
 
 # function to create a list of links
 def createLinkList(self):
@@ -28,7 +31,7 @@ def searchGoogle(userInput):
 
 # main
 def main():
-	userInput = raw_input("Please enter what you wish to find: ")
+	userInput = sys.argv[1:]
 	
 	results = searchGoogle(userInput)
 

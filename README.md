@@ -1,4 +1,4 @@
-# Author: Antwan Love
+# Author: ADLJR
 # Project: LoveSpider
 
 REQUIREMENTS:

@@ -10,7 +10,11 @@ A webcrawler for google search engine. Using python to capture and return first 
 INSTRUCTIONS:
 Enter your search query on the command line following "python spiderman.py". Program will return links relative to your inquiry.
 
-Example: python spiderman.py [Enter inquiry]
+EXAMPLE:
+- python spiderman.py [Enter inquiry] 
+
 If I wanted to search for "who is Peter Parker", I would enter:
+
 - "python spiderman.py who is Peter Parker" 
+
 The inquiry would be "who is Peter Parker".

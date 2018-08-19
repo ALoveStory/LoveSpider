@@ -1,18 +1,33 @@
-# Author: Antwan Love
+# Author: Antwan Love (ADLJR)
 # Webcrawler for search engine
 
+import csv
 import re
 import requests
 import sys
 from bs4 import BeautifulSoup
 
+# writing output to csv format
+def outputCSV(self):
+	outputFile = open('output.csv', 'w')
+	with outputFile:
+		writer = csv.writer(outputFile)
+		writer.writerows([self])
+	print "Output to CSV complete. Search has ended."
+
+
 # function to print links
 def printLinks(self):
 	i = 1	
+	newList = []
 	for link in self.find_all(href=re.compile("/url")):
-		url = (link.get("href"))
-		print "(", i,")", url.strip("/url?q=")
-		i+= 1
+		htmlUrl = (link.get("href"))
+		url = htmlUrl.strip("/url?q=")
+		urlLine = '{0} {1}'.format(i, url)
+		newList.append(urlLine)
+		i += 1
+	outputCSV(newList)
+		
 
 # function to create a list of links
 def createLinkList(self):

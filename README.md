@@ -5,10 +5,10 @@ REQUIREMENTS:
 Python 2.7.15 or later
 
 DESCRIPTION:
-A webcrawler for google search engine. Using python to capture and return first page of google results for any search input and output results through the command line.
+A webcrawler for google search engine. Using python to capture and return first page of google results for any search input. Program will return an "output.csv" file inside the same directory as the "spiderman.py" python file. The csv file will contain the links relative to your inquiry.
 
 INSTRUCTIONS:
-Enter your search query on the command line following "python spiderman.py". Program will return links relative to your inquiry.
+Enter your search query on the command line following "python spiderman.py". 
 
 EXAMPLE:
 - python spiderman.py [Enter inquiry] 

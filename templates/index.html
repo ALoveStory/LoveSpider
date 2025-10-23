@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spider Search Engine - Web Crawler</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header>
+            <h1>🕷️ Spider Search Engine</h1>
+            <p class="subtitle">Web Crawler & Link Extractor</p>
+            <p class="demo-badge">🔍 Demo Mode - Try: "python", "flask", or "web scraping"</p>
+        </header>
+
+        <!-- Search Form -->
+        <div class="search-container">
+            <form id="searchForm">
+                <div class="input-group">
+                    <input 
+                        type="text" 
+                        id="searchQuery" 
+                        placeholder="Enter your search query..."
+                        required
+                        autofocus
+                    >
+                    <button type="submit" id="searchBtn">
+                        <span id="btnText">Search</span>
+                        <span id="btnLoader" class="loader" style="display: none;"></span>
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Status Message -->
+        <div id="statusMessage" class="status-message" style="display: none;"></div>
+
+        <!-- Results Section -->
+        <div id="resultsSection" class="results-section" style="display: none;">
+            <div class="results-header">
+                <h2>Search Results</h2>
+                <div class="results-meta">
+                    <span id="resultCount"></span>
+                    <button id="downloadBtn" class="download-btn">
+                        Download CSV
+                    </button>
+                </div>
+            </div>
+            
+            <div id="resultsContainer" class="results-container">
+                <!-- Results will be inserted here -->
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer>
+            <p>⚠️ <strong>Note:</strong> Web scraping may violate terms of service. Use responsibly and consider official APIs.</p>
+            <p class="author">Created by Antwan Love (ADLJR)</p>
+        </footer>
+    </div>
+
+    <script>
+        const searchForm = document.getElementById('searchForm');
+        const searchQuery = document.getElementById('searchQuery');
+        const searchBtn = document.getElementById('searchBtn');
+        const btnText = document.getElementById('btnText');
+        const btnLoader = document.getElementById('btnLoader');
+        const statusMessage = document.getElementById('statusMessage');
+        const resultsSection = document.getElementById('resultsSection');
+        const resultsContainer = document.getElementById('resultsContainer');
+        const resultCount = document.getElementById('resultCount');
+        const downloadBtn = document.getElementById('downloadBtn');
+
+        let currentResults = [];
+        let currentQuery = '';
+
+        // Handle search form submission
+        searchForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const query = searchQuery.value.trim();
+            if (!query) return;
+
+            // Update UI - show loading state
+            setLoadingState(true);
+            hideStatus();
+            hideResults();
+
+            try {
+                // Make API request
+                const response = await fetch('/search', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ query: query })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    currentResults = data.results || [];
+                    currentQuery = data.query;
+                    
+                    if (currentResults.length > 0) {
+                        displayResults(currentResults, data.query);
+                        showStatus(`Found ${currentResults.length} results for "${data.query}"`, 'success');
+                    } else {
+                        showStatus(data.message || 'No results found', 'warning');
+                    }
+                } else {
+                    showStatus(data.error || 'An error occurred', 'error');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showStatus('Failed to fetch results. Please try again.', 'error');
+            } finally {
+                setLoadingState(false);
+            }
+        });
+
+        // Handle download button
+        downloadBtn.addEventListener('click', async () => {
+            if (currentResults.length === 0) return;
+
+            try {
+                const response = await fetch('/download', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        links: currentResults,
+                        query: currentQuery
+                    })
+                });
+
+                if (response.ok) {
+                    const blob = await response.blob();
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = `spider_results_${currentQuery.replace(/\s+/g, '_')}.csv`;
+                    document.body.appendChild(a);
+                    a.click();
+                    window.URL.revokeObjectURL(url);
+                    document.body.removeChild(a);
+                    showStatus('CSV downloaded successfully!', 'success');
+                } else {
+                    showStatus('Failed to download CSV', 'error');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showStatus('Failed to download CSV', 'error');
+            }
+        });
+
+        function displayResults(results, query) {
+            resultsContainer.innerHTML = '';
+            resultCount.textContent = `${results.length} links found`;
+
+            const list = document.createElement('ul');
+            list.className = 'results-list';
+
+            results.forEach((url, index) => {
+                const li = document.createElement('li');
+                li.className = 'result-item';
+                
+                const numberSpan = document.createElement('span');
+                numberSpan.className = 'result-number';
+                numberSpan.textContent = `${index + 1}.`;
+                
+                const link = document.createElement('a');
+                link.href = url;
+                link.target = '_blank';
+                link.rel = 'noopener noreferrer';
+                link.textContent = url;
+                
+                li.appendChild(numberSpan);
+                li.appendChild(link);
+                list.appendChild(li);
+            });
+
+            resultsContainer.appendChild(list);
+            resultsSection.style.display = 'block';
+        }
+
+        function setLoadingState(isLoading) {
+            if (isLoading) {
+                searchBtn.disabled = true;
+                btnText.style.display = 'none';
+                btnLoader.style.display = 'inline-block';
+            } else {
+                searchBtn.disabled = false;
+                btnText.style.display = 'inline';
+                btnLoader.style.display = 'none';
+            }
+        }
+
+        function showStatus(message, type) {
+            statusMessage.textContent = message;
+            statusMessage.className = `status-message ${type}`;
+            statusMessage.style.display = 'block';
+            
+            // Auto-hide success messages after 5 seconds
+            if (type === 'success') {
+                setTimeout(() => {
+                    hideStatus();
+                }, 5000);
+            }
+        }
+
+        function hideStatus() {
+            statusMessage.style.display = 'none';
+        }
+
+        function hideResults() {
+            resultsSection.style.display = 'none';
+        }
+    </script>
+</body>
+</html>
+
